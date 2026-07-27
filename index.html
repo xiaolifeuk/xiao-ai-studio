@@ -1,12 +1,153 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>小翠 AI 工作台</title><link rel="stylesheet" href="style.css"></head><body><div class="app"><aside><h1>小翠 AI 工作台</h1><p>Xiao AI Studio</p><nav><button class="active" data-page="home">🏠 今日主页</button><button data-page="ideas">🎯 选题助手</button><button data-page="xhs">📕 小红书文案</button><button data-page="tiktok">🎵 TikTok 文案</button><button data-page="restaurant">🍜 餐馆宣传</button><button data-page="uk">🇬🇧 英国生活</button><button data-page="driving">🚗 英国驾照</button><button data-page="dog">🐶 狗狗日常</button><button data-page="analytics">📊 数据分析</button><button data-page="planner">🗓️ 发布计划</button></nav></aside><main><header><div><small>CONTENT CREATOR DASHBOARD</small><h2 id="title">今天发什么？</h2></div><button id="quick">✨ 一键生成今日内容</button></header>
-<section id="home" class="page active"><div class="hero card"><div><span>适合你现在的方向</span><h3>英国生活 × 餐馆日常 × 小红书 × TikTok</h3><p>选一个方向，工作台会给你标题、脚本、封面文字、标签和拍摄建议。</p></div><div class="tip"><b>今天最简单的拍法</b><ol><li>门口 3 秒</li><li>环境 3 秒</li><li>制作过程 5 秒</li><li>成品近景 5 秒</li><li>地址或菜单 3 秒</li></ol></div></div><div class="grid"><div class="card"><h3>账号内容比例</h3><p>英国生活 40%</p><p>餐馆日常 30%</p><p>英国驾照 15%</p><p>购物省钱 10%</p><p>狗狗日常 5%</p></div><div class="card"><h3>目前建议</h3><p>主做小红书，TikTok 同步发英文版。</p><p>先不买流量，连续测试 10–20 条内容。</p><p>每周先发 3–4 条，能坚持最重要。</p></div></div></section>
-<section id="ideas" class="page"><div class="card"><h3>选题助手</h3><label>方向<select id="ideaCat"><option value="restaurant">英国餐馆</option><option value="uk">英国生活</option><option value="driving">英国驾照</option><option value="dog">英国养狗</option><option value="shopping">英国购物省钱</option></select></label><label>今天有什么素材<input id="ideaMat" placeholder="例如：锅包肉、Tesco、带狗散步"></label><button class="gen" data-gen="ideas">生成 6 个选题</button><div id="ideasOut" class="out"></div></div></section>
-<section id="xhs" class="page"><div class="card"><h3>小红书文案</h3><label>主题<input id="xhsTopic" placeholder="例如：伯明翰餐馆的一天"></label><label>地点<input id="xhsLoc" placeholder="例如：Birmingham"></label><label>风格<select id="xhsStyle"><option>真实分享</option><option>攻略收藏型</option><option>吸引到店</option><option>轻松日常</option></select></label><button class="gen" data-gen="xhs">生成标题、正文和标签</button><div id="xhsOut" class="out"></div></div></section>
-<section id="tiktok" class="page"><div class="card"><h3>TikTok 英文内容</h3><label>菜品或主题<input id="ttTopic" placeholder="例如：Sweet and Sour Chicken"></label><label>城市<input id="ttCity" placeholder="例如：Birmingham"></label><button class="gen" data-gen="tiktok">生成英文脚本</button><div id="ttOut" class="out"></div></div></section>
-<section id="restaurant" class="page"><div class="card"><h3>餐馆宣传助手</h3><label>餐馆名称<input id="restName" placeholder="你的餐馆名称"></label><label>招牌菜<input id="restDish" placeholder="例如：锅包肉"></label><label>特色<input id="restFeature" placeholder="例如：东北菜、分量大、适合聚餐"></label><label>区域<input id="restArea" placeholder="例如：Birmingham City Centre"></label><button class="gen" data-gen="restaurant">生成宣传内容</button><div id="restOut" class="out"></div></div></section>
-<section id="uk" class="page"><div class="card"><h3>英国生活内容</h3><label>主题<input id="ukTopic" placeholder="例如：英国超市一周物价"></label><label>今天发生了什么<input id="ukDetail" placeholder="例如：去 Tesco 买了一周的菜"></label><button class="gen" data-gen="uk">生成内容方案</button><div id="ukOut" class="out"></div></div></section>
-<section id="driving" class="page"><div class="card"><h3>英国驾照内容</h3><label>主题<input id="drvTopic" placeholder="例如：理论考试一次过经验"></label><label>你的经验<input id="drvDetail" placeholder="例如：预约了附近城市"></label><button class="gen" data-gen="driving">生成攻略文案</button><div id="drvOut" class="out"></div></div></section>
-<section id="dog" class="page"><div class="card"><h3>狗狗日常</h3><label>主题<input id="dogTopic" placeholder="例如：吉娃娃的一天"></label><label>今天发生了什么<input id="dogDetail" placeholder="例如：第一次带她去新公园"></label><button class="gen" data-gen="dog">生成日常文案</button><div id="dogOut" class="out"></div></div></section>
-<section id="analytics" class="page"><div class="card"><h3>笔记数据分析</h3><label>浏览量<input id="views" type="number"></label><label>点赞<input id="likes" type="number"></label><label>收藏<input id="saves" type="number"></label><label>评论<input id="comments" type="number"></label><button class="gen" data-gen="analytics">分析这条内容</button><div id="anaOut" class="out"></div></div></section>
-<section id="planner" class="page"><div class="card"><h3>本周发布计划</h3><div class="planform"><select id="day"><option>周一</option><option>周二</option><option>周三</option><option>周四</option><option>周五</option><option>周六</option><option>周日</option></select><select id="platform"><option>小红书</option><option>TikTok</option><option>小红书 + TikTok</option></select><input id="planTopic" placeholder="内容主题"><button id="addPlan">加入计划</button></div><div id="planList"></div></div></section>
-<footer>小翠 AI 工作台 · 本地版 · 内容保存在浏览器中</footer></main></div><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>Xiao AI Studio V6</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="mark">✦</div><div><b>Xiao AI Studio</b><small>AI 创作者工作台 · V6</small></div></div>
+    <nav id="nav">
+      <button class="active" data-page="dashboard">⌂ 首页</button>
+      <p>AI 创作</p>
+      <button data-page="create">✦ AI 创作中心</button>
+      <button data-page="chat">◌ AI 聊天</button>
+      <button data-page="restaurant">🍜 餐馆运营</button>
+      <button data-page="reviews">💬 评论回复</button>
+      <p>分析与管理</p>
+      <button data-page="analyse">▥ 截图与数据分析</button>
+      <button data-page="calendar">▣ 内容日历</button>
+      <button data-page="library">▱ 内容库</button>
+      <button data-page="ideas">♧ 灵感中心</button>
+      <p>系统</p>
+      <button data-page="settings">⚙ 个性化设置</button>
+    </nav>
+    <div class="profile"><span>翠</span><div><b>小翠</b><small>英国生活创作者</small></div><em>Pro</em></div>
+  </aside>
+
+  <main>
+    <header>
+      <div><h1 id="hello">小翠，欢迎回来</h1><p id="date"></p></div>
+      <div class="header-actions"><button class="ghost" id="theme">☾</button><button class="primary" data-open-create>＋ 新建创作</button></div>
+    </header>
+
+    <section class="page active" id="dashboard">
+      <div class="hero">
+        <div><span class="eyebrow">YOUR CREATOR COMMAND CENTRE</span><h2>把英国生活、餐馆和短视频<br>放进一个 AI 工作台</h2><p>生成文案、分析数据、保存内容、规划发布，不需要来回切换工具。</p><button class="primary" data-open-create>✦ 开始今天的创作</button></div>
+        <div class="hero-orb">AI<small>小红书 · TikTok<br>餐馆 · 英国生活</small></div>
+      </div>
+
+      <div class="kpis">
+        <article><small>已保存内容</small><strong id="kpiLibrary">0</strong><span>篇</span></article>
+        <article><small>本周计划</small><strong id="kpiPlans">0</strong><span>条</span></article>
+        <article><small>今日任务</small><strong id="kpiTasks">0/5</strong><span>完成</span></article>
+        <article><small>AI 状态</small><strong id="apiState">检查中</strong><span>安全后端</span></article>
+      </div>
+
+      <div class="dash-grid">
+        <article class="card span2">
+          <div class="card-title"><div><h3>今日任务</h3><p>完成一套最小创作流程</p></div><button class="link" id="resetTasks">重置</button></div>
+          <div id="tasks" class="tasks"></div>
+        </article>
+        <article class="card">
+          <div class="card-title"><div><h3>最佳发布时间</h3><p>可在设置中修改</p></div><span>◷</span></div>
+          <div class="times"><p><b>小红书</b><span>10:00–11:00</span></p><p><b>TikTok</b><span>18:00–20:00</span></p><p><b>餐馆</b><span>20:00–22:00</span></p></div>
+        </article>
+        <article class="card span2">
+          <div class="card-title"><div><h3>快捷创作</h3><p>选一个方向直接开始</p></div></div>
+          <div class="quick">
+            <button data-quick="小红书">📕<b>小红书</b><small>标题、正文、标签</small></button>
+            <button data-quick="TikTok">🎵<b>TikTok</b><small>英文脚本和字幕</small></button>
+            <button data-quick="餐馆宣传">🍜<b>餐馆宣传</b><small>中英文推广</small></button>
+            <button data-quick="英国生活">🇬🇧<b>英国生活</b><small>真实生活攻略</small></button>
+            <button data-quick="英国驾照">🚗<b>英国驾照</b><small>经验和知识分享</small></button>
+            <button data-quick="吉娃娃">🐶<b>吉娃娃</b><small>宠物日常内容</small></button>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title"><div><h3>今日灵感</h3><p>点一下带入创作中心</p></div><button class="link" id="shuffleIdeas">换一批</button></div>
+          <div id="miniIdeas" class="mini-ideas"></div>
+        </article>
+        <article class="card span3">
+          <div class="card-title"><div><h3>最近创作</h3><p>所有结果自动保存在浏览器中</p></div><button class="link" data-go="library">查看内容库 →</button></div>
+          <div id="recent" class="recent"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" id="create">
+      <div class="page-head"><div><span class="eyebrow">AI CREATION</span><h2>AI 创作中心</h2><p>一份素材，同时生成多个平台可以使用的内容。</p></div></div>
+      <div class="workspace">
+        <article class="card form-card">
+          <label>创作类型<select id="createType"><option>小红书</option><option>TikTok</option><option>餐馆宣传</option><option>英国生活</option><option>英国驾照</option><option>吉娃娃</option><option>多平台套装</option></select></label>
+          <label>主题和真实信息<textarea id="createPrompt" placeholder="例如：从伯明翰 Moor Street 坐火车去 Bicester North，只需约一小时，之后坐免费巴士去购物村……"></textarea></label>
+          <div class="two"><label>风格<select id="createTone"><option>真实自然</option><option>攻略收藏型</option><option>轻松有趣</option><option>专业可信</option><option>吸引到店</option></select></label><label>语言<select id="createLang"><option>中文</option><option>中英双语</option><option>英文</option></select></label></div>
+          <label>额外要求<input id="createExtra" placeholder="例如：控制在1000字以内，不夸张，不像广告"></label>
+          <button class="primary full" id="generateBtn">✦ 使用 AI 生成</button>
+          <p class="privacy">API Key 只保存在 Cloudflare 后端，不会发送到网页浏览器。</p>
+        </article>
+        <article class="card result-card"><div class="card-title"><div><h3>生成结果</h3><p id="generationStatus">等待输入</p></div><div><button class="ghost small" id="copyResult">复制</button><button class="ghost small" id="saveResult">保存</button></div></div><div id="createResult" class="result empty">生成后的内容会显示在这里。</div></article>
+      </div>
+    </section>
+
+    <section class="page" id="chat">
+      <div class="page-head"><div><span class="eyebrow">CREATOR COPILOT</span><h2>AI 聊天</h2><p>它会使用你在设置里保存的创作者资料回答。</p></div></div>
+      <article class="card chat-card"><div id="chatMessages" class="messages"><div class="msg ai">你好小翠，我可以帮你想选题、改文案、回复评论，也可以为餐馆做宣传。今天想做什么？</div></div><div class="chat-input"><textarea id="chatInput" placeholder="例如：我今天不知道发什么，帮我根据英国生活和餐馆给3个建议"></textarea><button class="primary" id="chatSend">发送</button></div></article>
+    </section>
+
+    <section class="page" id="restaurant">
+      <div class="page-head"><div><span class="eyebrow">RESTAURANT GROWTH</span><h2>餐馆运营中心</h2><p>菜品、活动、探店、Google 和社交媒体宣传。</p></div></div>
+      <div class="workspace">
+        <article class="card form-card">
+          <label>今天宣传什么<textarea id="restTopic" placeholder="菜品名称、活动内容、价格、营业时间或真实卖点"></textarea></label>
+          <div class="two"><label>渠道<select id="restChannel"><option>小红书 + TikTok + Instagram</option><option>Google Business</option><option>Facebook</option><option>全部渠道</option></select></label><label>目标<select id="restGoal"><option>吸引新客</option><option>推广新品</option><option>提高工作日客流</option><option>节日活动</option></select></label></div>
+          <button class="primary full" id="restGenerate">生成宣传套装</button>
+        </article>
+        <article class="card result-card"><div class="card-title"><h3>餐馆宣传结果</h3><button class="ghost small" data-copy-target="restResult">复制</button></div><div id="restResult" class="result empty">填写信息后生成。</div></article>
+      </div>
+    </section>
+
+    <section class="page" id="reviews">
+      <div class="page-head"><div><span class="eyebrow">REPUTATION</span><h2>评论回复助手</h2><p>支持好评、普通评价和投诉，生成自然礼貌的中英文回复。</p></div></div>
+      <div class="workspace">
+        <article class="card form-card"><label>顾客原评论<textarea id="reviewText" placeholder="粘贴 Google、Facebook 或其他平台评论"></textarea></label><div class="two"><label>回复语言<select id="reviewLang"><option>英文</option><option>中英双语</option><option>中文</option></select></label><label>语气<select id="reviewTone"><option>温暖专业</option><option>简短自然</option><option>真诚道歉</option></select></label></div><button class="primary full" id="reviewGenerate">生成回复</button></article>
+        <article class="card result-card"><div class="card-title"><h3>建议回复</h3><button class="ghost small" data-copy-target="reviewResult">复制</button></div><div id="reviewResult" class="result empty">评论回复会显示在这里。</div></article>
+      </div>
+    </section>
+
+    <section class="page" id="analyse">
+      <div class="page-head"><div><span class="eyebrow">CONTENT INTELLIGENCE</span><h2>截图与数据分析</h2><p>上传后台截图，或手动输入作品数据。</p></div></div>
+      <div class="workspace">
+        <article class="card form-card">
+          <label class="drop" id="drop"><input id="analysisImage" type="file" accept="image/*"><span>⇧</span><b>上传小红书或 TikTok 截图</b><small>PNG / JPG，建议截图中包含浏览、点赞、收藏和评论数据</small></label>
+          <div class="four"><label>浏览<input id="views" type="number" min="0"></label><label>点赞<input id="likes" type="number" min="0"></label><label>收藏<input id="saves" type="number" min="0"></label><label>评论<input id="comments" type="number" min="0"></label></div>
+          <label>补充说明<textarea id="analysisNote" placeholder="例如：发布时间、标题、内容主题、你觉得哪里有问题"></textarea></label>
+          <button class="primary full" id="analyseBtn">✦ AI 分析</button>
+        </article>
+        <article class="card result-card"><div class="card-title"><h3>分析报告</h3><button class="ghost small" data-copy-target="analysisResult">复制</button></div><div id="analysisResult" class="result empty">AI 会分析互动率、内容问题和下一条建议。</div></article>
+      </div>
+    </section>
+
+    <section class="page" id="calendar"><div class="page-head"><div><span class="eyebrow">PLANNING</span><h2>内容日历</h2><p>提前安排下一条内容，不再临时想题目。</p></div><button class="primary" id="addPlan">＋ 添加计划</button></div><article class="card"><div id="plans" class="list"></div></article></section>
+    <section class="page" id="library"><div class="page-head"><div><span class="eyebrow">CONTENT VAULT</span><h2>内容库</h2><p>搜索、复制和删除你生成过的内容。</p></div><div><input id="librarySearch" class="search" placeholder="搜索主题"><button class="ghost" id="clearLibrary">清空</button></div></div><article class="card"><div id="libraryList" class="list"></div></article></section>
+    <section class="page" id="ideas"><div class="page-head"><div><span class="eyebrow">IDEA ENGINE</span><h2>灵感中心</h2><p>围绕英国生活、餐馆、驾照和狗狗持续积累选题。</p></div><button class="primary" id="ideaRefresh">换一批</button></div><div id="ideaGrid" class="idea-grid"></div></section>
+
+    <section class="page" id="settings">
+      <div class="page-head"><div><span class="eyebrow">PERSONALISATION</span><h2>个性化设置</h2><p>这些资料保存在你的浏览器中，并作为创作背景提供给 AI。</p></div></div>
+      <article class="card settings-grid">
+        <label>你的称呼<input id="setName"></label><label>所在城市<input id="setCity"></label>
+        <label>餐馆名称<input id="setRestaurant" placeholder="尚未填写"></label><label>餐馆类型<input id="setCuisine" placeholder="例如：东北菜、中餐"></label>
+        <label>主要平台<input id="setPlatforms" placeholder="小红书、TikTok、Instagram"></label><label>内容风格<input id="setStyle" placeholder="真实、自然、不过度营销"></label>
+        <label class="wide">希望 AI 记住的背景<textarea id="setMemory" placeholder="例如：我住在英国，经营餐馆，养了一只吉娃娃，正在做英国生活自媒体……"></textarea></label>
+        <button class="primary" id="saveSettings">保存设置</button><span id="settingsSaved"></span>
+      </article>
+      <article class="card api-help"><h3>OpenAI API 状态</h3><p id="apiDetail">正在检查……</p><p>为了安全，API Key 必须添加到 Cloudflare Worker 的 Secret 中，名称为 <code>OPENAI_API_KEY</code>。不要把 Key 写进网页或上传到 GitHub。</p></article>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="/app.js"></script>
+</body></html>
