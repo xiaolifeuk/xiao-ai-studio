@@ -1,9 +1,24 @@
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
 function systemPrompt(body){
- const base=`你是 Xiao AI Studio 3.4 Creator OS 的核心AI。用户主要在英国生活，创作小红书、TikTok、英国生活、英国驾照、购物攻略、餐馆推广和吉娃娃内容。请使用自然、真实、能直接执行的中文。不要编造用户未提供的价格、地址、优惠、数据、经历或平台规则。必须区分“已知事实”“合理推测”“需要核实”。涉及法律、签证、医疗、宠物健康、驾照规则或平台政策时，提醒核对官方来源。品牌资料：${body.context||"未提供"}`;
+ const base=`你是 Xiao AI Studio 3.4.2 Results First 的内容创作AI。用户主要在英国生活，创作小红书和 TikTok 内容。请使用自然、真实、生活化、可直接复制发布的中文。不要展示分析过程，不要输出“已知事实、合理推测、需要核实”等分析章节。不要编造图片或素材中没有的价格、地址、优惠、体验、数据或经历；无法确认的信息直接省略，必要时只用一句简短的“发布前请核对价格/活动时间”。品牌资料：${body.context||"未提供"}`;
  const prompts={
   command:`你是运营总指挥。目标：${body.goal}；方向：${body.area}；目标类型：${body.target}；素材/限制：${body.extra||"无"}。输出：①一句话决策 ②判断依据 ③今天立刻做的3步 ④完成标准 ⑤下一步 ⑥风险与待核实。不要给互相冲突的方案。`,
-  create:`你是文案、运营、短视频三个AI协作。内容类型：${body.type}；真实素材：${body.topic}；语言：${body.language}；风格：${body.tone}；目标：${body.goal}；额外要求：${body.extra||"无"}。${body.image?"用户还上传了一张参考图片。请先识别图片中明确可见的商品、环境、文字和关键信息，再与文字素材结合；看不清或无法确认的内容必须标记为需要核实，不得猜测。":"用户没有上传参考图片。"} 输出完整内容包：3个标题、封面主副标题、开头钩子、正文/口播脚本、图片或镜头顺序、标签、置顶评论、发布时间建议、发布前核对清单。多平台时分别输出。`,
+  create:`请直接交付最终成品，不解释你如何识别图片，也不要输出分析、推测或核实清单。内容类型：${body.type}；补充素材：${body.topic}；语言：${body.language}；风格：${body.tone}；目标：${body.goal}；额外要求：${body.extra||"无"}。用户上传了 ${(body.images||[]).length} 张内容图片，请综合所有图片中清晰可见的信息创作。输出只保留以下两部分：
+
+【小红书内容】
+1. 推荐标题1个
+2. 备用标题2个
+3. 可直接发布的完整正文（自然分段，适量emoji）
+4. 8—12个相关标签
+5. 封面主标题和副标题
+
+【短视频脚本】
+1. 建议时长
+2. 开头3秒钩子
+3. 按镜头顺序写完整口播/字幕脚本，明确每个镜头使用哪类图片或画面
+4. 结尾互动话术
+
+不要额外输出图片识别过程、运营理论、发布时间、风险提醒或长篇说明。结果要让用户复制后稍作修改即可发布。`,
   analyse:`你是数据AI和运营AI。作品数据：${JSON.stringify(body.metrics||{})}。如有截图，结合截图。先计算能计算的点赞率、收藏率、评论率、总互动率，再只优先选择一个决策：“保留观察 / 修改封面标题 / 补充互动 / 删除重发”。输出：①决策 ②数据事实 ③最大问题排序 ④立刻操作 ⑤新标题与封面 ⑥下一条方案 ⑦多久后再判断。不得承诺流量。`,
   team:`你是一个由运营AI、文案AI、数据AI、设计AI、视频AI组成的创作团队。项目目标：${body.goal}；真实素材：${body.material||"无"}；平台：${body.platform||"小红书"}；周期：${body.period||"7天"}。分别给出每个AI的意见，最后由总指挥整合成唯一执行方案，包括内容矩阵、优先级、日程、衡量指标和今日第一步。`,
   cover:`你是小红书封面策划AI。主题：${body.topic}；受众：${body.audience||"普通用户"}；风格：${body.style||"醒目真实"}；素材：${body.material||"无"}。生成4套封面方案，每套包含：主标题（12字内）、副标题、画面布局、照片选择、字体层级、避免元素、适合的标题。不能声称直接生成图片。`,
@@ -16,7 +31,7 @@ function systemPrompt(body){
 function outputText(data){if(data.output_text)return data.output_text;return (data.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==="output_text").map(x=>x.text).join("\n")}
 export default{async fetch(request,env){
  const url=new URL(request.url);
- if(url.pathname==="/api/status")return json({configured:Boolean(env.OPENAI_API_KEY),model:env.OPENAI_MODEL||"gpt-5-mini",version:"3.4"});
+ if(url.pathname==="/api/status")return json({configured:Boolean(env.OPENAI_API_KEY),model:env.OPENAI_MODEL||"gpt-5-mini",version:"3.4.2"});
  if(url.pathname==="/api/image-generate"){
   if(request.method!=="POST")return json({error:"只支持 POST 请求"},405);
   if(!env.OPENAI_API_KEY)return json({error:"尚未配置 OPENAI_API_KEY"},503);
@@ -30,7 +45,8 @@ export default{async fetch(request,env){
   let body;try{body=await request.json()}catch{return json({error:"请求格式不正确"},400)}
   if(JSON.stringify(body).length>12_000_000)return json({error:"上传内容过大"},413);
   const content=[{type:"input_text",text:systemPrompt(body)}];
-  if(body.image&&typeof body.image==="string"&&body.image.startsWith("data:image/"))content.push({type:"input_image",image_url:body.image});
+  const images=Array.isArray(body.images)?body.images.slice(0,20):(body.image?[body.image]:[]);
+  for(const image of images){if(typeof image==="string"&&image.startsWith("data:image/"))content.push({type:"input_image",image_url:image});}
   try{
    const r=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{authorization:`Bearer ${env.OPENAI_API_KEY}`,"content-type":"application/json"},body:JSON.stringify({model:env.OPENAI_MODEL||"gpt-5-mini",input:[{role:"user",content}],max_output_tokens:3200})});
    const data=await r.json();if(!r.ok)return json({error:data?.error?.message||"OpenAI 请求失败"},r.status);return json({text:outputText(data)});
