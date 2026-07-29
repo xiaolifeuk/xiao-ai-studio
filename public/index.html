@@ -1,153 +1,43 @@
-<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#101827">
-  <title>Xiao AI Studio V6</title>
-  <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-<div class="app">
-  <aside class="side">
-    <div class="brand"><div class="mark">✦</div><div><b>Xiao AI Studio</b><small>AI 创作者工作台 · V6</small></div></div>
-    <nav id="nav">
-      <button class="active" data-page="dashboard">⌂ 首页</button>
-      <p>AI 创作</p>
-      <button data-page="create">✦ AI 创作中心</button>
-      <button data-page="chat">◌ AI 聊天</button>
-      <button data-page="restaurant">🍜 餐馆运营</button>
-      <button data-page="reviews">💬 评论回复</button>
-      <p>分析与管理</p>
-      <button data-page="analyse">▥ 截图与数据分析</button>
-      <button data-page="calendar">▣ 内容日历</button>
-      <button data-page="library">▱ 内容库</button>
-      <button data-page="ideas">♧ 灵感中心</button>
-      <p>系统</p>
-      <button data-page="settings">⚙ 个性化设置</button>
-    </nav>
-    <div class="profile"><span>翠</span><div><b>小翠</b><small>英国生活创作者</small></div><em>Pro</em></div>
-  </aside>
-
-  <main>
-    <header>
-      <div><h1 id="hello">小翠，欢迎回来</h1><p id="date"></p></div>
-      <div class="header-actions"><button class="ghost" id="theme">☾</button><button class="primary" data-open-create>＋ 新建创作</button></div>
-    </header>
-
-    <section class="page active" id="dashboard">
-      <div class="hero">
-        <div><span class="eyebrow">YOUR CREATOR COMMAND CENTRE</span><h2>把英国生活、餐馆和短视频<br>放进一个 AI 工作台</h2><p>生成文案、分析数据、保存内容、规划发布，不需要来回切换工具。</p><button class="primary" data-open-create>✦ 开始今天的创作</button></div>
-        <div class="hero-orb">AI<small>小红书 · TikTok<br>餐馆 · 英国生活</small></div>
-      </div>
-
-      <div class="kpis">
-        <article><small>已保存内容</small><strong id="kpiLibrary">0</strong><span>篇</span></article>
-        <article><small>本周计划</small><strong id="kpiPlans">0</strong><span>条</span></article>
-        <article><small>今日任务</small><strong id="kpiTasks">0/5</strong><span>完成</span></article>
-        <article><small>AI 状态</small><strong id="apiState">检查中</strong><span>安全后端</span></article>
-      </div>
-
-      <div class="dash-grid">
-        <article class="card span2">
-          <div class="card-title"><div><h3>今日任务</h3><p>完成一套最小创作流程</p></div><button class="link" id="resetTasks">重置</button></div>
-          <div id="tasks" class="tasks"></div>
-        </article>
-        <article class="card">
-          <div class="card-title"><div><h3>最佳发布时间</h3><p>可在设置中修改</p></div><span>◷</span></div>
-          <div class="times"><p><b>小红书</b><span>10:00–11:00</span></p><p><b>TikTok</b><span>18:00–20:00</span></p><p><b>餐馆</b><span>20:00–22:00</span></p></div>
-        </article>
-        <article class="card span2">
-          <div class="card-title"><div><h3>快捷创作</h3><p>选一个方向直接开始</p></div></div>
-          <div class="quick">
-            <button data-quick="小红书">📕<b>小红书</b><small>标题、正文、标签</small></button>
-            <button data-quick="TikTok">🎵<b>TikTok</b><small>英文脚本和字幕</small></button>
-            <button data-quick="餐馆宣传">🍜<b>餐馆宣传</b><small>中英文推广</small></button>
-            <button data-quick="英国生活">🇬🇧<b>英国生活</b><small>真实生活攻略</small></button>
-            <button data-quick="英国驾照">🚗<b>英国驾照</b><small>经验和知识分享</small></button>
-            <button data-quick="吉娃娃">🐶<b>吉娃娃</b><small>宠物日常内容</small></button>
-          </div>
-        </article>
-        <article class="card">
-          <div class="card-title"><div><h3>今日灵感</h3><p>点一下带入创作中心</p></div><button class="link" id="shuffleIdeas">换一批</button></div>
-          <div id="miniIdeas" class="mini-ideas"></div>
-        </article>
-        <article class="card span3">
-          <div class="card-title"><div><h3>最近创作</h3><p>所有结果自动保存在浏览器中</p></div><button class="link" data-go="library">查看内容库 →</button></div>
-          <div id="recent" class="recent"></div>
-        </article>
-      </div>
-    </section>
-
-    <section class="page" id="create">
-      <div class="page-head"><div><span class="eyebrow">AI CREATION</span><h2>AI 创作中心</h2><p>一份素材，同时生成多个平台可以使用的内容。</p></div></div>
-      <div class="workspace">
-        <article class="card form-card">
-          <label>创作类型<select id="createType"><option>小红书</option><option>TikTok</option><option>餐馆宣传</option><option>英国生活</option><option>英国驾照</option><option>吉娃娃</option><option>多平台套装</option></select></label>
-          <label>主题和真实信息<textarea id="createPrompt" placeholder="例如：从伯明翰 Moor Street 坐火车去 Bicester North，只需约一小时，之后坐免费巴士去购物村……"></textarea></label>
-          <div class="two"><label>风格<select id="createTone"><option>真实自然</option><option>攻略收藏型</option><option>轻松有趣</option><option>专业可信</option><option>吸引到店</option></select></label><label>语言<select id="createLang"><option>中文</option><option>中英双语</option><option>英文</option></select></label></div>
-          <label>额外要求<input id="createExtra" placeholder="例如：控制在1000字以内，不夸张，不像广告"></label>
-          <button class="primary full" id="generateBtn">✦ 使用 AI 生成</button>
-          <p class="privacy">API Key 只保存在 Cloudflare 后端，不会发送到网页浏览器。</p>
-        </article>
-        <article class="card result-card"><div class="card-title"><div><h3>生成结果</h3><p id="generationStatus">等待输入</p></div><div><button class="ghost small" id="copyResult">复制</button><button class="ghost small" id="saveResult">保存</button></div></div><div id="createResult" class="result empty">生成后的内容会显示在这里。</div></article>
-      </div>
-    </section>
-
-    <section class="page" id="chat">
-      <div class="page-head"><div><span class="eyebrow">CREATOR COPILOT</span><h2>AI 聊天</h2><p>它会使用你在设置里保存的创作者资料回答。</p></div></div>
-      <article class="card chat-card"><div id="chatMessages" class="messages"><div class="msg ai">你好小翠，我可以帮你想选题、改文案、回复评论，也可以为餐馆做宣传。今天想做什么？</div></div><div class="chat-input"><textarea id="chatInput" placeholder="例如：我今天不知道发什么，帮我根据英国生活和餐馆给3个建议"></textarea><button class="primary" id="chatSend">发送</button></div></article>
-    </section>
-
-    <section class="page" id="restaurant">
-      <div class="page-head"><div><span class="eyebrow">RESTAURANT GROWTH</span><h2>餐馆运营中心</h2><p>菜品、活动、探店、Google 和社交媒体宣传。</p></div></div>
-      <div class="workspace">
-        <article class="card form-card">
-          <label>今天宣传什么<textarea id="restTopic" placeholder="菜品名称、活动内容、价格、营业时间或真实卖点"></textarea></label>
-          <div class="two"><label>渠道<select id="restChannel"><option>小红书 + TikTok + Instagram</option><option>Google Business</option><option>Facebook</option><option>全部渠道</option></select></label><label>目标<select id="restGoal"><option>吸引新客</option><option>推广新品</option><option>提高工作日客流</option><option>节日活动</option></select></label></div>
-          <button class="primary full" id="restGenerate">生成宣传套装</button>
-        </article>
-        <article class="card result-card"><div class="card-title"><h3>餐馆宣传结果</h3><button class="ghost small" data-copy-target="restResult">复制</button></div><div id="restResult" class="result empty">填写信息后生成。</div></article>
-      </div>
-    </section>
-
-    <section class="page" id="reviews">
-      <div class="page-head"><div><span class="eyebrow">REPUTATION</span><h2>评论回复助手</h2><p>支持好评、普通评价和投诉，生成自然礼貌的中英文回复。</p></div></div>
-      <div class="workspace">
-        <article class="card form-card"><label>顾客原评论<textarea id="reviewText" placeholder="粘贴 Google、Facebook 或其他平台评论"></textarea></label><div class="two"><label>回复语言<select id="reviewLang"><option>英文</option><option>中英双语</option><option>中文</option></select></label><label>语气<select id="reviewTone"><option>温暖专业</option><option>简短自然</option><option>真诚道歉</option></select></label></div><button class="primary full" id="reviewGenerate">生成回复</button></article>
-        <article class="card result-card"><div class="card-title"><h3>建议回复</h3><button class="ghost small" data-copy-target="reviewResult">复制</button></div><div id="reviewResult" class="result empty">评论回复会显示在这里。</div></article>
-      </div>
-    </section>
-
-    <section class="page" id="analyse">
-      <div class="page-head"><div><span class="eyebrow">CONTENT INTELLIGENCE</span><h2>截图与数据分析</h2><p>上传后台截图，或手动输入作品数据。</p></div></div>
-      <div class="workspace">
-        <article class="card form-card">
-          <label class="drop" id="drop"><input id="analysisImage" type="file" accept="image/*"><span>⇧</span><b>上传小红书或 TikTok 截图</b><small>PNG / JPG，建议截图中包含浏览、点赞、收藏和评论数据</small></label>
-          <div class="four"><label>浏览<input id="views" type="number" min="0"></label><label>点赞<input id="likes" type="number" min="0"></label><label>收藏<input id="saves" type="number" min="0"></label><label>评论<input id="comments" type="number" min="0"></label></div>
-          <label>补充说明<textarea id="analysisNote" placeholder="例如：发布时间、标题、内容主题、你觉得哪里有问题"></textarea></label>
-          <button class="primary full" id="analyseBtn">✦ AI 分析</button>
-        </article>
-        <article class="card result-card"><div class="card-title"><h3>分析报告</h3><button class="ghost small" data-copy-target="analysisResult">复制</button></div><div id="analysisResult" class="result empty">AI 会分析互动率、内容问题和下一条建议。</div></article>
-      </div>
-    </section>
-
-    <section class="page" id="calendar"><div class="page-head"><div><span class="eyebrow">PLANNING</span><h2>内容日历</h2><p>提前安排下一条内容，不再临时想题目。</p></div><button class="primary" id="addPlan">＋ 添加计划</button></div><article class="card"><div id="plans" class="list"></div></article></section>
-    <section class="page" id="library"><div class="page-head"><div><span class="eyebrow">CONTENT VAULT</span><h2>内容库</h2><p>搜索、复制和删除你生成过的内容。</p></div><div><input id="librarySearch" class="search" placeholder="搜索主题"><button class="ghost" id="clearLibrary">清空</button></div></div><article class="card"><div id="libraryList" class="list"></div></article></section>
-    <section class="page" id="ideas"><div class="page-head"><div><span class="eyebrow">IDEA ENGINE</span><h2>灵感中心</h2><p>围绕英国生活、餐馆、驾照和狗狗持续积累选题。</p></div><button class="primary" id="ideaRefresh">换一批</button></div><div id="ideaGrid" class="idea-grid"></div></section>
-
-    <section class="page" id="settings">
-      <div class="page-head"><div><span class="eyebrow">PERSONALISATION</span><h2>个性化设置</h2><p>这些资料保存在你的浏览器中，并作为创作背景提供给 AI。</p></div></div>
-      <article class="card settings-grid">
-        <label>你的称呼<input id="setName"></label><label>所在城市<input id="setCity"></label>
-        <label>餐馆名称<input id="setRestaurant" placeholder="尚未填写"></label><label>餐馆类型<input id="setCuisine" placeholder="例如：东北菜、中餐"></label>
-        <label>主要平台<input id="setPlatforms" placeholder="小红书、TikTok、Instagram"></label><label>内容风格<input id="setStyle" placeholder="真实、自然、不过度营销"></label>
-        <label class="wide">希望 AI 记住的背景<textarea id="setMemory" placeholder="例如：我住在英国，经营餐馆，养了一只吉娃娃，正在做英国生活自媒体……"></textarea></label>
-        <button class="primary" id="saveSettings">保存设置</button><span id="settingsSaved"></span>
-      </article>
-      <article class="card api-help"><h3>OpenAI API 状态</h3><p id="apiDetail">正在检查……</p><p>为了安全，API Key 必须添加到 Cloudflare Worker 的 Secret 中，名称为 <code>OPENAI_API_KEY</code>。不要把 Key 写进网页或上传到 GitHub。</p></article>
-    </section>
-  </main>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><title>Xiao AI Studio 3.4</title><link rel="stylesheet" href="/style.css"></head><body>
+<div class="app"><aside><div class="logo"><span>✦</span><div><b>Xiao AI Studio</b><small>Creator OS · 3.4</small></div></div><nav id="nav">
+<button class="active" data-page="dashboard">⌂ 总览</button><p>AI 创作团队</p><button data-page="team">◉ AI 团队</button><button data-page="command">✦ 指挥中心</button><button data-page="create">✍ 内容工厂</button><button data-page="cover">▣ 封面实验室</button><button data-page="imageStudio">🖼 AI 图片工作室</button><button data-page="videoStudio">🎬 视频剪辑</button><button data-page="analyse">▥ 数据诊断</button><button data-page="doctor">♡ 账号医生</button><button data-page="batch">⚡ 批量流水线</button><p>管理中心</p><button data-page="daily">☀ AI 每日管家</button><button data-page="calendar">□ 内容日历</button><button data-page="library">▱ 内容资产库</button><button data-page="projects">◫ 项目中心</button><button data-page="prompts">⌘ Prompt 收藏夹</button><button data-page="history">◷ 历史记录</button><button data-page="income">£ 收入中心</button><button data-page="brand">◎ 品牌大脑</button><button data-page="settings">⚙ 设置</button></nav><div class="user"><span>翠</span><div><b>小翠</b><small>个人创作者</small></div><em>3.4</em></div></aside>
+<main><header><div><h1 id="pageTitle">总览</h1><p id="today"></p></div><div><button class="icon" id="theme">◐</button><button class="primary" data-go="team">＋ 新建项目</button></div></header>
+<section class="page active" id="dashboard"><div class="hero"><div><span class="eyebrow">CREATOR OS 3.4</span><h2>把灵感、创作、分析和计划放进一个工作台。</h2><p>3.4 新增 AI 图片工作室和 AI 每日管家，图片处理与每天任务集中完成。</p><div class="actions"><button class="primary" data-go="team">启动 AI 团队</button><button class="soft" data-go="analyse">诊断一条笔记</button></div></div><div class="core"><b>AI</b><small id="apiBadge">连接检查中</small></div></div>
+<div class="metrics"><article><small>内容资产</small><strong id="mLibrary">0</strong><span>篇</span></article><article><small>待发布</small><strong id="mPlans">0</strong><span>条</span></article><article><small>本月净收入</small><strong id="mIncome">£0</strong><span></span></article><article><small>AI 项目</small><strong id="mDecisions">0</strong><span>次</span></article></div>
+<div class="focusbar">
+  <div><span class="eyebrow">TODAY FOCUS</span><b id="focusTitle">今天先完成一条可发布内容</b><small id="focusNote">选择一个模板，补充真实素材，然后交给 AI。</small></div>
+  <div class="focus-actions"><button class="soft" data-template="boots">Boots 攻略</button><button class="soft" data-template="english">英语学习</button><button class="soft" data-template="restaurant">餐厅推广</button><button class="primary" data-go="create">开始创作</button></div>
 </div>
-<div class="toast" id="toast"></div>
-<script src="/app.js"></script>
-</body></html>
+<div class="grid"><article class="card span2"><div class="cardhead"><div><h3>今天的创作流程</h3><p>完成后勾选</p></div><button class="text" id="resetTasks">重置</button></div><div id="taskList" class="tasks"></div></article><article class="card"><div class="cardhead"><div><h3>今日建议</h3><p>不要同时做太多</p></div></div><div id="advice" class="advice"></div><button class="soft full" id="refreshAdvice">换一个</button></article><article class="card span3"><div class="cardhead"><div><h3>快速入口</h3><p>直接开始</p></div></div><div class="quick"><button data-go="cover">▣<b>做封面</b><small>4套方案</small></button><button data-go="doctor">♡<b>查账号</b><small>7天修复</small></button><button data-go="batch">⚡<b>批量拆内容</b><small>一组素材多篇</small></button><button data-go="create">✍<b>写完整文案</b><small>标题正文标签</small></button></div></article><article class="card span3"><div class="cardhead"><div><h3>最近内容</h3><p>保存在当前浏览器</p></div><button class="text" data-go="library">查看全部 →</button></div><div id="recent" class="recent"></div></article></div></section>
+
+<section class="page" id="team"><div class="pagehead"><span class="eyebrow">AI TEAM</span><h2>AI 团队</h2><p>让运营、文案、数据、设计和视频 AI 先各自分析，再交给总指挥整合。</p></div><div class="workspace"><article class="card form"><label>项目目标<textarea id="teamGoal" placeholder="例如：用7天把英国生活账号内容方向稳定下来，并准备3篇可发布笔记"></textarea></label><label>真实素材<textarea id="teamMaterial" placeholder="你已有的照片、经历、数据、限制"></textarea></label><div class="two"><label>平台<select id="teamPlatform"><option>小红书</option><option>TikTok</option><option>小红书 + TikTok</option><option>餐馆社交媒体</option></select></label><label>周期<select id="teamPeriod"><option>今天</option><option>3天</option><option selected>7天</option><option>30天</option></select></label></div><button class="primary full" id="teamRun">◉ 召集 AI 团队</button></article><article class="card resultcard"><div class="cardhead"><div><h3>团队方案</h3><p id="teamState">等待项目</p></div><div><button class="icon small" data-copy="teamResult">复制</button><button class="icon small" data-save="teamResult" data-type="AI团队方案">保存</button></div></div><div id="teamResult" class="result empty">团队讨论结果会显示在这里。</div></article></div></section>
+<section class="page" id="command"><div class="pagehead"><span class="eyebrow">COMMAND</span><h2>AI 指挥中心</h2><p>先给明确结论，再给执行步骤。</p></div><div class="workspace"><article class="card form"><label>你想解决什么？<textarea id="commandGoal"></textarea></label><div class="two"><label>方向<select id="commandArea"><option>小红书运营</option><option>TikTok运营</option><option>餐馆推广</option><option>英国生活内容</option><option>综合经营</option></select></label><label>目标<select id="commandTarget"><option>决定下一步</option><option>提高流量</option><option>制定计划</option><option>复盘问题</option></select></label></div><label>素材或限制<input id="commandExtra"></label><button class="primary full" id="commandRun">✦ 让 AI 做决定</button></article><article class="card resultcard"><div class="cardhead"><div><h3>AI 决策</h3><p id="commandState">等待任务</p></div><div><button class="icon small" data-copy="commandResult">复制</button><button class="icon small" data-save="commandResult" data-type="AI决策">保存</button></div></div><div id="commandResult" class="result empty">行动方案会显示在这里。</div></article></div></section>
+<section class="page" id="create"><div class="pagehead"><span class="eyebrow">CONTENT FACTORY</span><h2>内容工厂</h2><p>一次输入，得到完整发布包。</p></div><div class="workspace"><article class="card form"><div class="template-block"><div><b>快速模板</b><small>点击后自动填写，可继续修改</small></div><div class="template-grid"><button type="button" data-template="boots">🛍️ Boots购物</button><button type="button" data-template="english">📚 英语课堂</button><button type="button" data-template="restaurant">🍜 餐厅推广</button><button type="button" data-template="driving">🚗 英国驾照</button><button type="button" data-template="pet">🐶 吉娃娃</button><button type="button" data-template="life">🇬🇧 英国生活</button></div></div><div class="draft-status" id="draftStatus">草稿会自动保存在当前浏览器</div><div class="two"><label>类型<select id="createType"><option>小红书完整套装</option><option>TikTok短视频</option><option>英国生活攻略</option><option>英国驾照分享</option><option>餐馆推广套装</option><option>吉娃娃日常</option><option>多平台改写</option></select></label><label>语言<select id="createLang"><option>中文</option><option>中英双语</option><option>英文</option></select></label></div><label>真实素材<textarea id="createTopic"></textarea></label><div class="two"><label>风格<select id="createTone"><option>真实自然</option><option>攻略收藏型</option><option>轻松有趣</option><option>专业可信</option></select></label><label>目标<select id="createGoal"><option>提高收藏</option><option>提高评论</option><option>提高关注</option><option>提高完播</option></select></label></div><label>额外要求<input id="createExtra"></label><button class="primary full" id="createRun">✍ 生成完整内容包</button></article><article class="card resultcard"><div class="cardhead"><div><h3>生成结果</h3><p id="createState">等待素材</p></div><div><button class="icon small" data-copy="createResult">复制</button><button class="icon small" data-save="createResult" data-type="内容创作">保存</button></div></div><div id="createResult" class="result empty">完整内容包会显示在这里。</div></article></div></section>
+<section class="page" id="cover"><div class="pagehead"><span class="eyebrow">COVER LAB</span><h2>封面实验室</h2><p>生成可在 Canva 或剪映直接照做的封面方案。</p></div><div class="workspace"><article class="card form"><label>主题<input id="coverTopic" placeholder="例如：伯明翰去比斯特最省钱攻略"></label><div class="two"><label>目标受众<input id="coverAudience" placeholder="英国留学生"></label><label>风格<select id="coverStyle"><option>小红书大字攻略风</option><option>极简杂志风</option><option>真实生活记录</option><option>醒目对比风</option></select></label></div><label>可用照片/素材<textarea id="coverMaterial"></textarea></label><button class="primary full" id="coverRun">▣ 生成4套封面方案</button></article><article class="card resultcard"><div class="cardhead"><div><h3>封面方案</h3><p id="coverState">等待主题</p></div><div><button class="icon small" data-copy="coverResult">复制</button><button class="icon small" data-save="coverResult" data-type="封面方案">保存</button></div></div><div id="coverResult" class="result empty">4套方案会显示在这里。</div></article></div></section>
+<section class="page" id="analyse"><div class="pagehead"><span class="eyebrow">DIAGNOSIS</span><h2>数据诊断</h2><p>上传截图或填写数据，得到唯一优先决策。</p></div><div class="workspace"><article class="card form"><label class="drop"><input id="analysisImage" type="file" accept="image/*"><span>⇧</span><b>上传截图</b><small id="fileName">PNG / JPG</small></label><div class="four"><label>浏览<input id="views" type="number"></label><label>点赞<input id="likes" type="number"></label><label>收藏<input id="saves" type="number"></label><label>评论<input id="comments" type="number"></label></div><label>补充说明<textarea id="analysisNote"></textarea></label><button class="primary full" id="analyseRun">▥ 给出运营结论</button></article><article class="card resultcard"><div class="cardhead"><div><h3>诊断结果</h3><p id="analyseState">等待数据</p></div><div><button class="icon small" data-copy="analyseResult">复制</button><button class="icon small" data-save="analyseResult" data-type="数据诊断">保存</button></div></div><div id="analyseResult" class="result empty">结论会显示在这里。</div></article></div></section>
+<section class="page" id="doctor"><div class="pagehead"><span class="eyebrow">ACCOUNT DOCTOR</span><h2>账号医生</h2><p>检查定位、主页、栏目和内容结构。</p></div><div class="workspace"><article class="card form"><label>账号主页信息<textarea id="doctorProfile" placeholder="昵称、简介、粉丝数、主要内容方向"></textarea></label><label>最近内容和数据<textarea id="doctorPosts" placeholder="列出最近5-10篇标题、浏览、点赞、收藏"></textarea></label><label>你的目标<input id="doctorGoal" value="提高稳定流量和关注"></label><button class="primary full" id="doctorRun">♡ 开始账号体检</button></article><article class="card resultcard"><div class="cardhead"><div><h3>体检报告</h3><p id="doctorState">等待资料</p></div><div><button class="icon small" data-copy="doctorResult">复制</button><button class="icon small" data-save="doctorResult" data-type="账号体检">保存</button></div></div><div id="doctorResult" class="result empty">账号修复方案会显示在这里。</div></article></div></section>
+<section class="page" id="batch"><div class="pagehead"><span class="eyebrow">BATCH PIPELINE</span><h2>批量内容流水线</h2><p>把一次出行或一组照片拆成多篇内容。</p></div><div class="workspace"><article class="card form"><label>素材清单<textarea id="batchMaterial" placeholder="例如：火车票照片、路线截图、购物村照片、退税小票、回程巴士站"></textarea></label><div class="two"><label>平台<select id="batchPlatform"><option>小红书</option><option>TikTok</option><option>小红书 + TikTok</option></select></label><label>生成数量<select id="batchCount"><option>3</option><option>5</option><option>7</option></select></label></div><label>目标<select id="batchGoal"><option>提高收藏</option><option>提高关注</option><option>提高完播</option><option>吸引到店</option></select></label><button class="primary full" id="batchRun">⚡ 拆成批量内容</button></article><article class="card resultcard"><div class="cardhead"><div><h3>流水线方案</h3><p id="batchState">等待素材</p></div><div><button class="icon small" data-copy="batchResult">复制</button><button class="icon small" data-save="batchResult" data-type="批量内容方案">保存</button></div></div><div id="batchResult" class="result empty">批量方案会显示在这里。</div></article></div></section>
+<section class="page" id="calendar"><div class="pagehead rowhead"><div><span class="eyebrow">CALENDAR</span><h2>内容日历</h2><p>安排主题、平台和发布时间。</p></div><button class="primary" id="addPlan">＋ 添加计划</button></div><article class="card"><div id="planList" class="list"></div></article></section>
+<section class="page" id="library"><div class="pagehead rowhead"><div><span class="eyebrow">ASSETS</span><h2>内容资产库</h2><p>保存 AI 结果，方便复制和复用。</p></div><div><input class="search" id="librarySearch" placeholder="搜索"><button class="soft" id="clearLibrary">清空</button></div></div><article class="card"><div id="libraryList" class="list"></div></article></section>
+
+<section class="page" id="projects"><div class="pagehead rowhead"><div><span class="eyebrow">PROJECT HUB</span><h2>项目中心</h2><p>把不同方向的内容、目标和进度分开管理。</p></div><button class="primary" id="addProject">＋ 新建项目</button></div><div class="project-layout"><article class="card"><div id="projectList" class="project-list"></div></article><article class="card form"><div class="cardhead"><div><h3>项目详情</h3><p id="projectState">选择一个项目</p></div><button class="danger small" id="deleteProject">删除项目</button></div><label>项目名称<input id="projectName" placeholder="例如：英国生活小红书"></label><label>项目目标<textarea id="projectGoal" placeholder="这个项目想达到什么目标"></textarea></label><div class="two"><label>平台<select id="projectPlatform"><option>小红书</option><option>TikTok</option><option>小红书 + TikTok</option><option>餐馆社交媒体</option></select></label><label>状态<select id="projectStatus"><option>进行中</option><option>待开始</option><option>已完成</option><option>已暂停</option></select></label></div><label>下一步<textarea id="projectNext" placeholder="下一步要做什么"></textarea></label><button class="primary full" id="saveProject">保存项目</button></article></div></section>
+<section class="page" id="prompts"><div class="pagehead rowhead"><div><span class="eyebrow">PROMPT LIBRARY</span><h2>Prompt 收藏夹</h2><p>保存常用指令，一键带入内容工厂。</p></div><button class="primary" id="addPrompt">＋ 新建 Prompt</button></div><div class="prompt-tools"><input class="search" id="promptSearch" placeholder="搜索名称、分类或内容"><select id="promptCategory"><option value="">全部分类</option><option>小红书</option><option>TikTok</option><option>餐厅</option><option>英语学习</option><option>英国生活</option><option>其他</option></select></div><article class="card"><div id="promptList" class="prompt-grid"></div></article></section>
+
+
+<section class="page" id="imageStudio"><div class="pagehead"><span class="eyebrow">AI IMAGE STUDIO</span><h2>AI 图片工作室</h2><p>上传图片后，可本地调色、压缩、手动打码、切九宫格，也可让 AI 识别文字和分析图片。</p></div>
+<div class="image-layout"><article class="card image-main"><label class="drop image-drop"><input id="studioFile" type="file" accept="image/*"><span>⇧</span><b>上传或拖入图片</b><small id="studioFileName">PNG / JPG / WebP</small></label><div class="canvas-wrap"><canvas id="studioCanvas"></canvas><div id="canvasEmpty">上传图片后在这里预览</div></div><div class="image-controls"><label>亮度<input id="imgBrightness" type="range" min="50" max="150" value="100"></label><label>对比度<input id="imgContrast" type="range" min="50" max="150" value="100"></label><label>饱和度<input id="imgSaturation" type="range" min="0" max="200" value="100"></label><label>压缩质量<input id="imgQuality" type="range" min="20" max="100" value="85"></label></div><div class="image-actions"><button class="soft" id="resetImage">重置效果</button><button class="soft" id="toggleBlur">开启手动打码</button><button class="primary" id="downloadImage">导出图片</button><button class="soft" id="nineGrid">生成九宫格</button></div><small class="hint">手动打码开启后，在图片上拖动框选需要遮挡的位置。</small></article>
+<aside class="image-side"><article class="card"><div class="cardhead"><div><h3>AI 图片识别</h3><p>需要已配置 OpenAI API</p></div></div><textarea id="imageQuestion" placeholder="例如：提取图片文字并总结重点；检查是否包含姓名、地址、二维码等隐私信息。"></textarea><div class="image-actions"><button class="primary" id="imageOcr">OCR + 总结</button><button class="soft" id="imageAnalyse">图片分析</button></div><div id="imageAiResult" class="result empty">AI 结果会显示在这里。</div></article><article class="card"><div class="cardhead"><div><h3>AI 图片生成</h3><p>输入描述生成社交媒体配图</p></div></div><textarea id="imagePrompt" placeholder="例如：奶油紫色的小红书封面，标题为 Boots购物攻略，简洁高级"></textarea><button class="primary full" id="generateImage">生成图片</button><div id="generatedImage" class="generated empty">生成结果会显示在这里。</div></article></aside></div></section>
+
+<section class="page" id="videoStudio"><div class="pagehead"><span class="eyebrow">VIDEO STUDIO · BETA</span><h2>视频剪辑</h2><p>视频只在当前浏览器中处理，不会上传。选择片段、画面比例和播放速度后即可导出。</p></div>
+<div class="video-layout"><article class="card video-main"><label class="drop video-drop"><input id="videoFile" type="file" accept="video/mp4,video/quicktime,video/webm,video/*"><span>⇧</span><b>上传或拖入视频</b><small id="videoFileName">MP4 / MOV / WebM</small></label>
+<div class="video-preview-wrap"><video id="videoPreview" controls playsinline></video><div id="videoEmpty">上传视频后在这里预览</div></div>
+<div class="trim-panel"><div class="trim-head"><b>保留片段</b><span id="trimSummary">00:00 — 00:00</span></div><div class="two"><label>开始时间（秒）<input id="trimStart" type="number" min="0" step="0.1" value="0"></label><label>结束时间（秒）<input id="trimEnd" type="number" min="0" step="0.1" value="0"></label></div><div class="video-actions"><button class="soft" id="setTrimStart">设为当前开始</button><button class="soft" id="setTrimEnd">设为当前结束</button><button class="soft" id="previewTrim">预览片段</button></div></div>
+<div class="video-controls"><label>画面比例<select id="videoRatio"><option value="source">保持原比例</option><option value="9:16">9:16 小红书 / TikTok</option><option value="1:1">1:1 方形</option><option value="16:9">16:9 YouTube</option></select></label><label>播放速度<select id="videoSpeed"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label><label class="check-line"><input id="videoMute" type="checkbox"> 导出时静音</label></div>
+<div class="video-actions"><button class="soft" id="resetVideo">重置</button><button class="soft" id="captureCover">截取当前帧</button><button class="primary" id="exportVideo">导出剪辑视频</button></div><div class="export-progress"><i id="videoProgress"></i></div><small id="videoStatus" class="hint">导出格式由浏览器决定，通常为 WebM。较长视频需要等待播放处理完成。</small><canvas id="videoCanvas" hidden></canvas></article>
+<aside class="video-side"><article class="card"><div class="cardhead"><div><h3>快速说明</h3><p>三步完成基础剪辑</p></div></div><ol class="video-steps"><li>上传视频并选择需要保留的开始和结束时间。</li><li>选择平台比例、速度，以及是否静音。</li><li>点击“导出剪辑视频”，等待进度完成。</li></ol><div class="video-note"><b>提示</b><p>竖屏比例会自动居中裁剪。重要人物或商品尽量保持在画面中央。</p></div></article></aside></div></section>
+<section class="page" id="daily"><div class="pagehead rowhead"><div><span class="eyebrow">AI DAILY ASSISTANT</span><h2>AI 每日管家</h2><p>每天任务自动保存，并在新的一天生成新的完成状态。</p></div><button class="primary" id="addDailyTask">＋ 添加任务</button></div><div class="daily-grid"><article class="card daily-hero"><span class="eyebrow">TODAY</span><h2 id="dailyGreeting">今天也一起创作吧！</h2><p id="dailyDate"></p><div class="progress"><i id="dailyProgress"></i></div><b id="dailyProgressText">0% 完成</b></article><article class="card"><div class="cardhead"><div><h3>今日任务</h3><p>完成后勾选</p></div><button class="text" id="resetDaily">重置今天</button></div><div id="dailyTaskList" class="daily-tasks"></div></article><article class="card"><div class="cardhead"><div><h3>智能建议</h3><p>根据草稿和项目生成</p></div></div><div id="dailySuggestion" class="advice"></div><button class="soft full" id="refreshDailySuggestion">换一个建议</button></article></div></section>
+<section class="page" id="history"><div class="pagehead rowhead"><div><span class="eyebrow">AI HISTORY</span><h2>历史记录</h2><p>AI 成功生成的结果会自动保存在当前浏览器，最多保留 200 条。</p></div><button class="danger" id="clearHistory">清空历史</button></div><div class="history-tools"><input class="search" id="historySearch" placeholder="搜索标题、输入或生成结果"><select id="historyType"><option value="">全部类型</option><option value="team">AI 团队</option><option value="command">AI 决策</option><option value="create">内容创作</option><option value="cover">封面方案</option><option value="analyse">数据诊断</option><option value="doctor">账号体检</option><option value="batch">批量内容</option></select></div><div id="historyList" class="history-grid"></div></section>
+<section class="page" id="income"><div class="pagehead rowhead"><div><span class="eyebrow">INCOME</span><h2>收入中心</h2><p>数据只保存在当前浏览器。</p></div><button class="primary" id="addIncome">＋ 记录一笔</button></div><div class="metrics"><article><small>总收入</small><strong id="incomeIn">£0</strong></article><article><small>总支出</small><strong id="incomeOut">£0</strong></article><article><small>净收入</small><strong id="incomeNet">£0</strong></article></div><article class="card"><div id="incomeList" class="list"></div></article></section>
+<section class="page" id="brand"><div class="pagehead"><span class="eyebrow">BRAND BRAIN</span><h2>品牌大脑</h2><p>所有 AI 生成时都会参考。</p></div><article class="card settings"><label>称呼<input id="brandName" value="小翠"></label><label>城市<input id="brandCity" value="Birmingham, UK"></label><label>平台<input id="brandPlatforms" value="小红书、TikTok"></label><label>内容方向<input id="brandTopics" value="英国生活、英国驾照、餐馆推广、吉娃娃"></label><label class="wide">个人风格<textarea id="brandVoice">真实、自然、说人话，不夸张，不像硬广告。</textarea></label><label class="wide">餐馆资料<textarea id="brandRestaurant"></textarea></label><label class="wide">禁止编造/注意事项<textarea id="brandRules">不要编造价格、地址、优惠、经历和数据。</textarea></label><button class="primary" id="saveBrand">保存</button></article></section>
+<section class="page" id="settings"><div class="pagehead"><span class="eyebrow">SETTINGS</span><h2>设置</h2></div><article class="card settings"><label>API状态<input id="modelStatus" readonly></label><label>版本<input value="3.4.0" readonly></label><button class="soft" id="exportData">导出本地数据</button></article></section>
+</main></div><div class="modal" id="historyModal"><div class="modal-card"><div class="cardhead"><div><h3 id="historyDetailTitle">历史详情</h3><p id="historyDetailMeta"></p></div><button class="icon" id="closeHistory">×</button></div><h4>当时输入</h4><pre id="historyDetailInput"></pre><h4>AI 结果</h4><div class="result" id="historyDetailResult"></div></div></div><div class="toast" id="toast"></div><script src="/app.js"></script></body></html>
