@@ -1,6 +1,6 @@
 {
-  "name": "xiao-ai-studio-v6",
-  "version": "6.0.0",
+  "name": "xiao-ai-studio",
+  "version": "3.4.0",
   "private": true,
   "type": "module",
   "scripts": {
