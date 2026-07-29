@@ -1,4 +1,4 @@
-# Xiao AI Studio 3.4
+# Xiao AI Studio 3.4.1
 
 Creator Edition for Cloudflare Workers.
 
@@ -19,3 +19,8 @@ Creator Edition for Cloudflare Workers.
 - AI 成功生成后自动保存历史记录
 - 支持搜索、分类、查看详情、复制、继续创作和删除
 - 历史记录保存在当前浏览器 localStorage，最多 200 条
+
+
+## 3.4.1 更新
+- 内容工厂新增参考图片上传、预览、替换与移除。
+- 支持 AI 结合图片和文字生成完整内容包。
