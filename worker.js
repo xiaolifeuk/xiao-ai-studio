@@ -1,6 +1,6 @@
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
 function systemPrompt(body){
- const base=`你是 Xiao AI Studio 3.4.2 Results First 的内容创作AI。用户主要在英国生活，创作小红书和 TikTok 内容。请使用自然、真实、生活化、可直接复制发布的中文。不要展示分析过程，不要输出“已知事实、合理推测、需要核实”等分析章节。不要编造图片或素材中没有的价格、地址、优惠、体验、数据或经历；无法确认的信息直接省略，必要时只用一句简短的“发布前请核对价格/活动时间”。品牌资料：${body.context||"未提供"}`;
+ const base=`你是 Xiao AI Studio 3.6 Results First 的内容创作AI。用户主要在英国生活，创作小红书和 TikTok 内容。请使用自然、真实、生活化、可直接复制发布的中文。不要展示分析过程，不要输出“已知事实、合理推测、需要核实”等分析章节。不要编造图片或素材中没有的价格、地址、优惠、体验、数据或经历；无法确认的信息直接省略，必要时只用一句简短的“发布前请核对价格/活动时间”。品牌资料：${body.context||"未提供"}`;
  const prompts={
   command:`你是运营总指挥。目标：${body.goal}；方向：${body.area}；目标类型：${body.target}；素材/限制：${body.extra||"无"}。输出：①一句话决策 ②判断依据 ③今天立刻做的3步 ④完成标准 ⑤下一步 ⑥风险与待核实。不要给互相冲突的方案。`,
   create:`请直接交付最终成品，不解释你如何识别图片，也不要输出分析、推测或核实清单。内容类型：${body.type}；补充素材：${body.topic}；语言：${body.language}；风格：${body.tone}；目标：${body.goal}；额外要求：${body.extra||"无"}。用户上传了 ${(body.images||[]).length} 张内容图片，请综合所有图片中清晰可见的信息创作。输出只保留以下两部分：
@@ -31,13 +31,30 @@ function systemPrompt(body){
 function outputText(data){if(data.output_text)return data.output_text;return (data.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==="output_text").map(x=>x.text).join("\n")}
 export default{async fetch(request,env){
  const url=new URL(request.url);
- if(url.pathname==="/api/status")return json({configured:Boolean(env.OPENAI_API_KEY),model:env.OPENAI_MODEL||"gpt-5-mini",version:"3.4.2"});
+ if(url.pathname==="/api/status")return json({configured:Boolean(env.OPENAI_API_KEY),model:env.OPENAI_MODEL||"gpt-5-mini",version:"3.6.0"});
  if(url.pathname==="/api/image-generate"){
   if(request.method!=="POST")return json({error:"只支持 POST 请求"},405);
   if(!env.OPENAI_API_KEY)return json({error:"尚未配置 OPENAI_API_KEY"},503);
   let body;try{body=await request.json()}catch{return json({error:"请求格式不正确"},400)}
   if(!body.prompt)return json({error:"请输入图片描述"},400);
   try{const r=await fetch("https://api.openai.com/v1/images/generations",{method:"POST",headers:{authorization:`Bearer ${env.OPENAI_API_KEY}`,"content-type":"application/json"},body:JSON.stringify({model:env.OPENAI_IMAGE_MODEL||"gpt-image-1",prompt:`为 Xiao AI Studio 创作一张适合社交媒体使用的图片。${body.prompt}`,size:"1024x1024"})});const data=await r.json();if(!r.ok)return json({error:data?.error?.message||"图片生成失败"},r.status);const b64=data?.data?.[0]?.b64_json;if(!b64)return json({error:"没有返回图片"},502);return json({image:`data:image/png;base64,${b64}`})}catch(e){return json({error:"连接图片生成服务失败："+e.message},502)}
+ }
+
+ if(url.pathname==="/api/speech"){
+  if(request.method!=="POST")return json({error:"只支持 POST 请求"},405);
+  if(!env.OPENAI_API_KEY)return json({error:"尚未配置 OPENAI_API_KEY"},503);
+  let body;try{body=await request.json()}catch{return json({error:"请求格式不正确"},400)}
+  const text=String(body.text||"").trim();
+  if(!text)return json({error:"请输入配音文字"},400);
+  if(text.length>4096)return json({error:"配音文字不能超过 4096 个字符"},400);
+  const allowedVoices=new Set(["alloy","ash","ballad","coral","echo","fable","onyx","nova","sage","shimmer","verse","marin","cedar"]);
+  const voice=allowedVoices.has(body.voice)?body.voice:"coral";
+  const speed=Math.min(4,Math.max(.25,Number(body.speed)||1));
+  try{
+   const r=await fetch("https://api.openai.com/v1/audio/speech",{method:"POST",headers:{authorization:`Bearer ${env.OPENAI_API_KEY}`,"content-type":"application/json"},body:JSON.stringify({model:env.OPENAI_TTS_MODEL||"gpt-4o-mini-tts",input:text,voice,speed,response_format:"mp3",instructions:String(body.style||"使用自然、清晰的中文表达。")})});
+   if(!r.ok){let message="配音生成失败";try{const d=await r.json();message=d?.error?.message||message}catch{}return json({error:message},r.status)}
+   return new Response(r.body,{status:200,headers:{"content-type":"audio/mpeg","content-disposition":"inline; filename=xiao-ai-voice.mp3","cache-control":"no-store"}});
+  }catch(e){return json({error:"连接配音服务失败："+e.message},502)}
  }
  if(url.pathname==="/api/ai"){
   if(request.method!=="POST")return json({error:"只支持 POST 请求"},405);
