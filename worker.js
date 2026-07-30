@@ -1,6 +1,6 @@
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
 function systemPrompt(body){
- const base=`你是 Xiao AI Studio 3.6.3 Results First 的内容创作AI。用户主要在英国生活，创作小红书和 TikTok 内容。请使用自然、真实、生活化、可直接复制发布的中文。不要展示分析过程，不要输出“已知事实、合理推测、需要核实”等分析章节。不要编造图片或素材中没有的价格、地址、优惠、体验、数据或经历；无法确认的信息直接省略，必要时只用一句简短的“发布前请核对价格/活动时间”。品牌资料：${body.context||"未提供"}`;
+ const base=`你是 Xiao AI Studio 3.6.4 Results First 的内容创作AI。用户主要在英国生活，创作小红书和 TikTok 内容。请使用自然、真实、生活化、可直接复制发布的中文。不要展示分析过程，不要输出“已知事实、合理推测、需要核实”等分析章节。不要编造图片或素材中没有的价格、地址、优惠、体验、数据或经历；无法确认的信息直接省略，必要时只用一句简短的“发布前请核对价格/活动时间”。品牌资料：${body.context||"未提供"}`;
  const prompts={
   command:`你是运营总指挥。目标：${body.goal}；方向：${body.area}；目标类型：${body.target}；素材/限制：${body.extra||"无"}。输出：①一句话决策 ②判断依据 ③今天立刻做的3步 ④完成标准 ⑤下一步 ⑥风险与待核实。不要给互相冲突的方案。`,
   create:`请直接交付最终成品，不解释你如何识别图片，也不要输出分析、推测或核实清单。内容类型：${body.type}；补充素材：${body.topic}；语言：${body.language}；风格：${body.tone}；目标：${body.goal}；额外要求：${body.extra||"无"}。用户上传了 ${(body.images||[]).length} 张内容图片，请综合所有图片中清晰可见的信息创作。输出只保留以下两部分：
@@ -23,7 +23,7 @@ function systemPrompt(body){
   team:`请直接交付可复制使用的最终内容，不展示团队讨论过程。项目目标：${body.goal}；补充素材：${body.material||"无"}；平台：${body.platform||"小红书"}；周期：${body.period||"7天"}；素材概况：${JSON.stringify(body.mediaSummary||{})}。用户上传的图片和从视频中提取的代表画面已附在请求中，请综合清晰可见的信息。输出：①推荐标题1个与备用标题2个 ②可直接发布的完整正文 ③8—12个标签 ④封面主副标题 ⑤完整短视频脚本（建议时长、开头3秒、按镜头顺序的口播/字幕、结尾互动）。不要输出分析过程、团队意见、运营理论或无法确认的信息。`,
   cover:`你是小红书封面策划AI。主题：${body.topic}；受众：${body.audience||"普通用户"}；风格：${body.style||"醒目真实"}；素材：${body.material||"无"}。生成4套封面方案，每套包含：主标题（12字内）、副标题、画面布局、照片选择、字体层级、避免元素、适合的标题。不能声称直接生成图片。`,
   doctor:`你是账号诊断AI。账号信息：${body.profile}；最近内容/数据：${body.posts||"未提供"}；目标：${body.goal||"提高稳定流量"}。输出：账号定位评分、主页问题、内容结构问题、最值得保留的方向、应停止的内容、3个固定栏目、7天修复计划、可量化观察指标。`,
-  batch:`你是内容流水线AI。用户素材清单：${body.material}；平台：${body.platform}; 目标：${body.goal}; 数量：${body.count||3}。把素材分组并生成可直接执行的批量方案：每条内容主题、封面文字、标题、内容结构、所需素材、发布顺序、复用方式。不要假装已经修图或发布。`,
+  batch:`你是内容流水线AI。用户补充素材：${body.material||"无"}；平台：${body.platform}; 目标：${body.goal}; 数量：${body.count||3}；共上传 ${body.imageTotal||0} 张图片；图片文件名：${JSON.stringify(body.imageNames||[])}。请求中附有最多20张代表图片，请根据清晰可见的内容理解素材并分组。直接输出 ${body.count||3} 条可执行内容，每条包含：①内容主题 ②对应图片编号/文件名 ③封面主副标题 ④推荐标题 ⑤可直接写作的正文结构或短视频脚本 ⑥标签方向 ⑦发布顺序。不得编造图片中看不到的价格、地点、优惠或经历；不要展示图片分析过程，不要假装已经修图、发布或生成成片。`,
   imageStudio:`你是图片识别与隐私检查AI。模式：${body.mode||"analyse"}；用户要求：${body.question||"分析图片"}。如果是OCR，按图片中的可见顺序提取文字，不确定的文字标记为“可能”。检查姓名、地址、电话、邮箱、订单号、会员号、二维码、条形码、票据编号等隐私，并明确建议遮挡的位置。若是图片分析，评价清晰度、构图、光线、配色、封面信息层级和社交媒体适配度，给出具体修改步骤。不要猜测看不清的内容。`
  };
  return `${base}\n\n${prompts[body.task]||"请帮助用户完成任务。"}`;
@@ -31,7 +31,7 @@ function systemPrompt(body){
 function outputText(data){if(data.output_text)return data.output_text;return (data.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==="output_text").map(x=>x.text).join("\n")}
 export default{async fetch(request,env){
  const url=new URL(request.url);
- if(url.pathname==="/api/status")return json({configured:Boolean(env.OPENAI_API_KEY),model:env.OPENAI_MODEL||"gpt-5-mini",version:"3.6.3"});
+ if(url.pathname==="/api/status")return json({configured:Boolean(env.OPENAI_API_KEY),model:env.OPENAI_MODEL||"gpt-5-mini",version:"3.6.5"});
  if(url.pathname==="/api/image-generate"){
   if(request.method!=="POST")return json({error:"只支持 POST 请求"},405);
   if(!env.OPENAI_API_KEY)return json({error:"尚未配置 OPENAI_API_KEY"},503);
@@ -82,6 +82,25 @@ export default{async fetch(request,env){
    if(!r.ok){let message="配音生成失败";try{const d=await r.json();message=d?.error?.message||message}catch{}return json({error:message},r.status)}
    return new Response(r.body,{status:200,headers:{"content-type":"audio/mpeg","content-disposition":"inline; filename=xiao-ai-voice.mp3","cache-control":"no-store"}});
   }catch(e){return json({error:"连接配音服务失败："+e.message},502)}
+ }
+ if(url.pathname==="/api/trends"){
+  if(request.method!=="POST")return json({error:"只支持 POST 请求"},405);
+  if(!env.OPENAI_API_KEY)return json({error:"尚未配置 OPENAI_API_KEY"},503);
+  let body;try{body=await request.json()}catch{return json({error:"请求格式不正确"},400)}
+  const count=Math.min(15,Math.max(5,Number(body.count)||10));
+  const prompt=`你是中文社交媒体热点编辑。请联网查找${body.time||"近7天"}与“${body.category||"不限方向"}”相关、适合${body.platform||"小红书和抖音"}的公开热点，地区重点为${body.region||"中国"}。用户账号关键词：${body.keyword||"未提供"}。品牌资料：${body.context||"未提供"}。
+
+请注意：平台站内榜单可能无法完整公开访问，不要冒充官方实时榜单，也不要编造热度数字。优先参考近期新闻、公开搜索趋势、品牌活动、节日节点和社交媒体公开页面。只输出可直接使用的中文结果：
+1. 先写“更新时间”和一句简短说明；
+2. 输出${count}个热点，每个包含：热点名称、为什么近期受关注、适合该用户的内容角度、小红书标题1个、抖音开头钩子1句、建议素材；
+3. 标记“适合马上做 / 可以观察 / 不建议硬蹭”；
+4. 最后选出最值得做的3个，并给出发布顺序；
+5. 列出主要公开来源名称及发布日期，避免长链接；
+6. 避免使用绝对化承诺，不输出敏感或高风险引导。`;
+  try{
+   const r=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{authorization:`Bearer ${env.OPENAI_API_KEY}`,"content-type":"application/json"},body:JSON.stringify({model:env.OPENAI_MODEL||"gpt-5-mini",tools:[{type:"web_search",search_context_size:"medium"}],input:prompt,max_output_tokens:4200})});
+   const data=await r.json();if(!r.ok)return json({error:data?.error?.message||"热点查询失败"},r.status);return json({text:outputText(data)});
+  }catch(e){return json({error:"连接热点查询服务失败："+e.message},502)}
  }
  if(url.pathname==="/api/ai"){
   if(request.method!=="POST")return json({error:"只支持 POST 请求"},405);
