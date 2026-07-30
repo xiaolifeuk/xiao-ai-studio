@@ -1,12 +1,9 @@
-# Xiao AI Studio 3.6
+# Xiao AI Studio 3.6 · AI 团队素材版
 
-在 3.6 多图版基础上新增 AI 配音。
+在 3.6 AI 配音版基础上，为「AI 团队」新增图片和视频素材上传。
 
-## AI 配音
-- 输入或粘贴中文脚本
-- 选择声音、语速和表达风格
-- 在线试听
-- 下载 MP3
-- 每次最多 4096 个字符
-
-配音通过 Cloudflare Worker 调用 OpenAI Text-to-Speech API，需要配置 `OPENAI_API_KEY`。可选变量：`OPENAI_TTS_MODEL`，默认 `gpt-4o-mini-tts`。
+- 图片最多 20 张
+- 视频最多 5 个（MP4 / MOV / WebM）
+- 视频在浏览器本机提取代表画面，不上传完整视频
+- AI 团队直接生成小红书内容、标签、封面文字和短视频脚本
+- 保留多图图片工作室、内容工厂、视频剪辑和 AI 配音

@@ -20,7 +20,7 @@ function systemPrompt(body){
 
 不要额外输出图片识别过程、运营理论、发布时间、风险提醒或长篇说明。结果要让用户复制后稍作修改即可发布。`,
   analyse:`你是数据AI和运营AI。作品数据：${JSON.stringify(body.metrics||{})}。如有截图，结合截图。先计算能计算的点赞率、收藏率、评论率、总互动率，再只优先选择一个决策：“保留观察 / 修改封面标题 / 补充互动 / 删除重发”。输出：①决策 ②数据事实 ③最大问题排序 ④立刻操作 ⑤新标题与封面 ⑥下一条方案 ⑦多久后再判断。不得承诺流量。`,
-  team:`你是一个由运营AI、文案AI、数据AI、设计AI、视频AI组成的创作团队。项目目标：${body.goal}；真实素材：${body.material||"无"}；平台：${body.platform||"小红书"}；周期：${body.period||"7天"}。分别给出每个AI的意见，最后由总指挥整合成唯一执行方案，包括内容矩阵、优先级、日程、衡量指标和今日第一步。`,
+  team:`请直接交付可复制使用的最终内容，不展示团队讨论过程。项目目标：${body.goal}；补充素材：${body.material||"无"}；平台：${body.platform||"小红书"}；周期：${body.period||"7天"}；素材概况：${JSON.stringify(body.mediaSummary||{})}。用户上传的图片和从视频中提取的代表画面已附在请求中，请综合清晰可见的信息。输出：①推荐标题1个与备用标题2个 ②可直接发布的完整正文 ③8—12个标签 ④封面主副标题 ⑤完整短视频脚本（建议时长、开头3秒、按镜头顺序的口播/字幕、结尾互动）。不要输出分析过程、团队意见、运营理论或无法确认的信息。`,
   cover:`你是小红书封面策划AI。主题：${body.topic}；受众：${body.audience||"普通用户"}；风格：${body.style||"醒目真实"}；素材：${body.material||"无"}。生成4套封面方案，每套包含：主标题（12字内）、副标题、画面布局、照片选择、字体层级、避免元素、适合的标题。不能声称直接生成图片。`,
   doctor:`你是账号诊断AI。账号信息：${body.profile}；最近内容/数据：${body.posts||"未提供"}；目标：${body.goal||"提高稳定流量"}。输出：账号定位评分、主页问题、内容结构问题、最值得保留的方向、应停止的内容、3个固定栏目、7天修复计划、可量化观察指标。`,
   batch:`你是内容流水线AI。用户素材清单：${body.material}；平台：${body.platform}; 目标：${body.goal}; 数量：${body.count||3}。把素材分组并生成可直接执行的批量方案：每条内容主题、封面文字、标题、内容结构、所需素材、发布顺序、复用方式。不要假装已经修图或发布。`,
@@ -31,7 +31,7 @@ function systemPrompt(body){
 function outputText(data){if(data.output_text)return data.output_text;return (data.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==="output_text").map(x=>x.text).join("\n")}
 export default{async fetch(request,env){
  const url=new URL(request.url);
- if(url.pathname==="/api/status")return json({configured:Boolean(env.OPENAI_API_KEY),model:env.OPENAI_MODEL||"gpt-5-mini",version:"3.6.0"});
+ if(url.pathname==="/api/status")return json({configured:Boolean(env.OPENAI_API_KEY),model:env.OPENAI_MODEL||"gpt-5-mini",version:"3.6.1"});
  if(url.pathname==="/api/image-generate"){
   if(request.method!=="POST")return json({error:"只支持 POST 请求"},405);
   if(!env.OPENAI_API_KEY)return json({error:"尚未配置 OPENAI_API_KEY"},503);
