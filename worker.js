@@ -31,30 +31,13 @@ function systemPrompt(body){
 function outputText(data){if(data.output_text)return data.output_text;return (data.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==="output_text").map(x=>x.text).join("\n")}
 export default{async fetch(request,env){
  const url=new URL(request.url);
- if(url.pathname==="/api/status")return json({configured:Boolean(env.OPENAI_API_KEY),model:env.OPENAI_MODEL||"gpt-5-mini",version:"3.6.0"});
+ if(url.pathname==="/api/status")return json({configured:Boolean(env.OPENAI_API_KEY),model:env.OPENAI_MODEL||"gpt-5-mini",version:"3.4.2"});
  if(url.pathname==="/api/image-generate"){
   if(request.method!=="POST")return json({error:"只支持 POST 请求"},405);
   if(!env.OPENAI_API_KEY)return json({error:"尚未配置 OPENAI_API_KEY"},503);
   let body;try{body=await request.json()}catch{return json({error:"请求格式不正确"},400)}
   if(!body.prompt)return json({error:"请输入图片描述"},400);
   try{const r=await fetch("https://api.openai.com/v1/images/generations",{method:"POST",headers:{authorization:`Bearer ${env.OPENAI_API_KEY}`,"content-type":"application/json"},body:JSON.stringify({model:env.OPENAI_IMAGE_MODEL||"gpt-image-1",prompt:`为 Xiao AI Studio 创作一张适合社交媒体使用的图片。${body.prompt}`,size:"1024x1024"})});const data=await r.json();if(!r.ok)return json({error:data?.error?.message||"图片生成失败"},r.status);const b64=data?.data?.[0]?.b64_json;if(!b64)return json({error:"没有返回图片"},502);return json({image:`data:image/png;base64,${b64}`})}catch(e){return json({error:"连接图片生成服务失败："+e.message},502)}
- }
-
- if(url.pathname==="/api/speech"){
-  if(request.method!=="POST")return json({error:"只支持 POST 请求"},405);
-  if(!env.OPENAI_API_KEY)return json({error:"尚未配置 OPENAI_API_KEY"},503);
-  let body;try{body=await request.json()}catch{return json({error:"请求格式不正确"},400)}
-  const text=String(body.text||"").trim();
-  if(!text)return json({error:"请输入配音文字"},400);
-  if(text.length>4096)return json({error:"配音文字不能超过 4096 个字符"},400);
-  const allowedVoices=new Set(["alloy","ash","ballad","coral","echo","fable","onyx","nova","sage","shimmer","verse","marin","cedar"]);
-  const voice=allowedVoices.has(body.voice)?body.voice:"coral";
-  const speed=Math.min(4,Math.max(.25,Number(body.speed)||1));
-  try{
-   const r=await fetch("https://api.openai.com/v1/audio/speech",{method:"POST",headers:{authorization:`Bearer ${env.OPENAI_API_KEY}`,"content-type":"application/json"},body:JSON.stringify({model:env.OPENAI_TTS_MODEL||"gpt-4o-mini-tts",input:text,voice,speed,response_format:"mp3",instructions:String(body.style||"使用自然、清晰的中文表达。")})});
-   if(!r.ok){let message="配音生成失败";try{const d=await r.json();message=d?.error?.message||message}catch{}return json({error:message},r.status)}
-   return new Response(r.body,{status:200,headers:{"content-type":"audio/mpeg","content-disposition":"inline; filename=xiao-ai-voice.mp3","cache-control":"no-store"}});
-  }catch(e){return json({error:"连接配音服务失败："+e.message},502)}
  }
  if(url.pathname==="/api/ai"){
   if(request.method!=="POST")return json({error:"只支持 POST 请求"},405);
