@@ -8,7 +8,38 @@ async function ai(payload,target,stateId){const e=$(target),s=$(stateId);e.class
 async function status(){try{const r=await fetch('/api/status'),d=await r.json();$('#apiBadge').textContent=d.configured?'AI 已连接':'尚未配置 API';$('#modelStatus').value=(d.configured?'已连接 · ':'未连接 · ')+(d.model||'')}catch{$('#apiBadge').textContent='连接异常';$('#modelStatus').value='连接异常'}}status();
 const taskLabels=['确定今天只做一个核心目标','准备真实素材和数据','生成并人工检查内容','发布或加入内容日历','24小时后记录结果'];function renderTasks(){$('#taskList').innerHTML=taskLabels.map((x,i)=>`<label><input type="checkbox" data-task="${i}" ${state.tasks[i]?'checked':''}><span>${x}</span></label>`).join('');$$('[data-task]').forEach(x=>x.onchange=()=>{state.tasks[+x.dataset.task]=x.checked;store.set(K+'tasks',state.tasks)})}renderTasks();$('#resetTasks').onclick=()=>{state.tasks=[false,false,false,false,false];store.set(K+'tasks',state.tasks);renderTasks()};const advice=['先复盘最近一条内容，再决定下一条，不要只凭感觉删除。','同一次出行至少拆成“路线、花费、避坑”三种内容。','标题负责让人点开，正文负责让人收藏，封面只说一个重点。','没有真实数据时，不要让 AI 编价格和平台规则。'];function daily(){$('#advice').textContent=advice[Math.floor(Math.random()*advice.length)]}daily();$('#refreshAdvice').onclick=daily;
 function save(type,text){if(!text||text.includes('会显示'))return toast('暂无内容');state.library.unshift({id:Date.now(),type,text,date:new Date().toLocaleString('zh-CN')});store.set(K+'library',state.library);metrics();recent();toast('已保存')}$$('[data-copy]').forEach(b=>b.onclick=async()=>{await navigator.clipboard.writeText($('#'+b.dataset.copy).textContent);toast('已复制')});$$('[data-save]').forEach(b=>b.onclick=()=>save(b.dataset.type,$('#'+b.dataset.save).textContent));
-$('#teamRun').onclick=()=>{if(!$('#teamGoal').value.trim())return toast('请填写目标');ai({task:'team',goal:$('#teamGoal').value,material:$('#teamMaterial').value,platform:$('#teamPlatform').value,period:$('#teamPeriod').value},'#teamResult','#teamState')};$('#commandRun').onclick=()=>{if(!$('#commandGoal').value.trim())return toast('请填写目标');ai({task:'command',goal:$('#commandGoal').value,area:$('#commandArea').value,target:$('#commandTarget').value,extra:$('#commandExtra').value},'#commandResult','#commandState')};
+
+let teamMedia=[];
+function teamImageData(file){return fileToCreateImage(file)}
+function waitEvent(el,name,timeout=12000){return new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(Error('读取视频超时')),timeout);el.addEventListener(name,()=>{clearTimeout(t);resolve()},{once:true});el.addEventListener('error',()=>{clearTimeout(t);reject(Error('无法读取这个视频格式'))},{once:true})})}
+async function captureVideoFrames(file){
+ if(file.size>350*1024*1024)throw Error(`${file.name} 太大，请选择小于350MB的视频`);
+ const url=URL.createObjectURL(file),video=document.createElement('video');video.preload='metadata';video.muted=true;video.playsInline=true;video.src=url;
+ try{
+  await waitEvent(video,'loadedmetadata');
+  const duration=Number.isFinite(video.duration)?video.duration:0;if(!duration)throw Error('无法读取视频时长');
+  const points=duration<4?[duration*.5]:[duration*.2,duration*.65];const frames=[];
+  for(const time of points){video.currentTime=Math.min(Math.max(.05,time),Math.max(.05,duration-.05));await waitEvent(video,'seeked');const max=760,scale=Math.min(1,max/Math.max(video.videoWidth,video.videoHeight)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(video.videoWidth*scale));c.height=Math.max(1,Math.round(video.videoHeight*scale));c.getContext('2d').drawImage(video,0,0,c.width,c.height);frames.push(c.toDataURL('image/jpeg',.58))}
+  return {id:Date.now()+Math.random(),kind:'video',name:file.name,size:file.size,duration,preview:url,frames};
+ }catch(e){URL.revokeObjectURL(url);throw e}
+}
+function renderTeamMedia(){
+ const images=teamMedia.filter(x=>x.kind==='image').length,videos=teamMedia.filter(x=>x.kind==='video').length,box=$('#teamMediaPreview');
+ $('#teamMediaSummary').textContent=teamMedia.length?`已添加 ${images} 张图片、${videos} 个视频`:'尚未添加素材';$('#teamMediaClear').hidden=!teamMedia.length;box.hidden=!teamMedia.length;
+ box.innerHTML=teamMedia.map((m,i)=>`<article class="team-media-item ${m.kind}">${m.kind==='image'?`<img src="${m.data}" alt="图片 ${i+1}">`:`<video src="${m.preview}" muted playsinline preload="metadata"></video><i>视频</i>`}<button type="button" data-team-media-remove="${m.id}" aria-label="删除">×</button><small title="${m.name}">${m.name}</small></article>`).join('');
+ $$('[data-team-media-remove]').forEach(b=>b.onclick=()=>{const item=teamMedia.find(x=>String(x.id)===b.dataset.teamMediaRemove);if(item?.kind==='video')URL.revokeObjectURL(item.preview);teamMedia=teamMedia.filter(x=>String(x.id)!==b.dataset.teamMediaRemove);renderTeamMedia();toast('素材已移除')});
+ $('#teamMediaDrop').classList.toggle('has-media',Boolean(teamMedia.length));
+}
+async function prepareTeamMedia(files){
+ const list=[...(files||[])];if(!list.length)return;let imageCount=teamMedia.filter(x=>x.kind==='image').length,videoCount=teamMedia.filter(x=>x.kind==='video').length;toast(`正在处理 ${list.length} 个素材...`);
+ for(const file of list){try{if(file.type.startsWith('image/')){if(imageCount>=20){toast('图片最多20张');continue}const im=await teamImageData(file);teamMedia.push({...im,kind:'image'});imageCount++}else if(file.type.startsWith('video/')){if(videoCount>=5){toast('视频最多5个');continue}teamMedia.push(await captureVideoFrames(file));videoCount++}else toast(`${file.name} 格式不支持`)}catch(e){toast(e.message)}}
+ $('#teamMediaInput').value='';renderTeamMedia();toast('素材已添加');
+}
+$('#teamMediaInput').onchange=e=>prepareTeamMedia(e.target.files);const teamDrop=$('#teamMediaDrop');teamDrop.ondragover=e=>{e.preventDefault();teamDrop.classList.add('drag')};teamDrop.ondragleave=()=>teamDrop.classList.remove('drag');teamDrop.ondrop=e=>{e.preventDefault();teamDrop.classList.remove('drag');prepareTeamMedia(e.dataTransfer.files)};
+$('#teamMediaClear').onclick=()=>{teamMedia.forEach(x=>x.kind==='video'&&URL.revokeObjectURL(x.preview));teamMedia=[];renderTeamMedia();toast('素材已清空')};
+$('#teamRun').onclick=()=>{if(!$('#teamGoal').value.trim()&&!$('#teamMaterial').value.trim()&&!teamMedia.length)return toast('请填写目标或添加素材');const stills=teamMedia.filter(x=>x.kind==='image').map(x=>x.data),videoFrames=teamMedia.filter(x=>x.kind==='video').flatMap(x=>x.frames);let images=[];if(videoFrames.length){const keepStill=Math.min(12,stills.length);images=[...stills.slice(0,keepStill),...videoFrames.slice(0,20-keepStill)]}else images=stills.slice(0,20);ai({task:'team',goal:$('#teamGoal').value.trim()||'根据上传素材生成可直接发布的内容和短视频脚本',material:$('#teamMaterial').value,platform:$('#teamPlatform').value,period:$('#teamPeriod').value,images,mediaSummary:{images:teamMedia.filter(x=>x.kind==='image').length,videos:teamMedia.filter(x=>x.kind==='video').map(x=>({name:x.name,duration:Math.round(x.duration)}))}},'#teamResult','#teamState')};
+
+$('#commandRun').onclick=()=>{if(!$('#commandGoal').value.trim())return toast('请填写目标');ai({task:'command',goal:$('#commandGoal').value,area:$('#commandArea').value,target:$('#commandTarget').value,extra:$('#commandExtra').value},'#commandResult','#commandState')};
 let createImages=[];
 async function fileToCreateImage(file){
  if(!file||!file.type.startsWith('image/'))throw Error('请选择图片文件');
