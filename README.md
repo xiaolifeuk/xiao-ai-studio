@@ -1,13 +1,12 @@
-# Xiao AI Studio 3.5 — Results First
+# Xiao AI Studio 3.6
 
-本版本只升级内容工厂：
+在 3.5 多图版基础上新增 AI 配音。
 
-- 一次最多上传 20 张图片
-- 支持分批继续添加、单张删除、清空全部
-- AI 综合所有图片直接生成最终内容
-- 结果只保留小红书成品与短视频脚本
-- 不再展示图片分析、合理推测和长篇说明
+## AI 配音
+- 输入或粘贴中文脚本
+- 选择声音、语速和表达风格
+- 在线试听
+- 下载 MP3
+- 每次最多 4096 个字符
 
-## 部署
-
-保持原有 Cloudflare Workers 配置。覆盖 GitHub 中的 `worker.js`、`package.json`、`README.md`，以及 `public` 文件夹里的 `index.html`、`app.js`、`style.css`，提交后等待 Cloudflare 自动部署。
+配音通过 Cloudflare Worker 调用 OpenAI Text-to-Speech API，需要配置 `OPENAI_API_KEY`。可选变量：`OPENAI_TTS_MODEL`，默认 `gpt-4o-mini-tts`。
